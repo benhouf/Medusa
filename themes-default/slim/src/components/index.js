@@ -6,6 +6,7 @@ import AppLink from './app-link.vue';
 import Asset from './asset.vue';
 import Backstretch from './backstretch.vue';
 import Config from './config.vue';
+import ConfigPostProcessing from './config-post-processing.vue';
 import ConfigTextbox from './config-textbox.vue';
 import ConfigTextboxNumber from './config-textbox-number.vue';
 import ConfigToggleSlider from './config-toggle-slider.vue';
@@ -34,6 +35,7 @@ export {
     Asset,
     Backstretch,
     Config,
+    ConfigPostProcessing,
     ConfigTextbox,
     ConfigTextboxNumber,
     ConfigToggleSlider,

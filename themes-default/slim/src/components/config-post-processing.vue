@@ -1,7 +1,4 @@
 <template>
-<div id="content960">
-    <vue-snotify></vue-snotify>
-    <h1 class="header">{{ $route.meta.header }}</h1>
     <div id="config">
         <div id="config-content">
             <form id="configForm" class="form-horizontal" @submit.prevent="save()">
@@ -255,26 +252,26 @@
                                     <!-- default name-pattern component -->
                                     <name-pattern class="component-item" :naming-pattern="postProcessing.naming.pattern"
                                         :naming-presets="presets" :multi-ep-style="postProcessing.naming.multiEp"
-                                        :multi-ep-styles="multiEpStringsSelect" @change="saveNaming" :flag-loaded="configLoaded">
+                                        :multi-ep-styles="multiEpStringsSelect" @change="saveNaming">
                                     </name-pattern>
 
                                     <!-- default sports name-pattern component -->
                                     <name-pattern class="component-item" :enabled="postProcessing.naming.enableCustomNamingSports"
                                         :naming-pattern="postProcessing.naming.patternSports" :naming-presets="presets" type="sports"
-                                        :enabled-naming-custom="postProcessing.naming.enableCustomNamingSports" @change="saveNamingSports" :flag-loaded="configLoaded">
+                                        :enabled-naming-custom="postProcessing.naming.enableCustomNamingSports" @change="saveNamingSports">
                                     </name-pattern>
 
                                     <!-- default airs by date name-pattern component -->
                                     <name-pattern class="component-item" :enabled="postProcessing.naming.enableCustomNamingAirByDate"
                                         :naming-pattern="postProcessing.naming.patternAirByDate" :naming-presets="presets" type="airs by date"
-                                        :enabled-naming-custom="postProcessing.naming.enableCustomNamingAirByDate" @change="saveNamingAbd" :flag-loaded="configLoaded">
+                                        :enabled-naming-custom="postProcessing.naming.enableCustomNamingAirByDate" @change="saveNamingAbd">
                                     </name-pattern>
 
                                     <!-- default anime name-pattern component -->
                                     <name-pattern class="component-item" :enabled="postProcessing.naming.enableCustomNamingAnime"
                                         :naming-pattern="postProcessing.naming.patternAnime" :naming-presets="presets" type="anime" :multi-ep-style="postProcessing.naming.animeMultiEp"
                                         :multi-ep-styles="multiEpStringsSelect" :anime-naming-type="postProcessing.naming.animeNamingType"
-                                        :enabled-naming-custom="postProcessing.naming.enableCustomNamingAnime" @change="saveNamingAnime" :flag-loaded="configLoaded">
+                                        :enabled-naming-custom="postProcessing.naming.enableCustomNamingAnime" @change="saveNamingAnime">
                                     </name-pattern>
 
                                     <div class="form-group component-item">
@@ -359,11 +356,22 @@
             </form>
         </div><!--/config-content//-->
     </div><!--/config//-->
-    <div class="clearfix"></div>
-</div><!-- #content960 //-->
 </template>
 <script>
+import { mapState } from 'vuex';
+import AppLink from './app-link.vue';
+import FileBrowser from './file-browser.vue';
+import NamePattern from './name-pattern.vue';
+import SelectList from './select-list.vue';
+
 export default {
+    name: 'config-post-processing',
+    components: {
+        AppLink,
+        FileBrowser,
+        NamePattern,
+        SelectList
+    },
     data() {
         return {
             configLoaded: false,
@@ -492,15 +500,25 @@ export default {
                     'Error'
                 );
             });
+        },
+        /**
+         * Get the first enabled metadata provider based on enabled features.
+         * @param {Object} providers - The metadata providers object.
+         * @return {String} - The id of the first enabled provider.
+         */
+        getFirstEnabledMetadataProvider() {
+            const { metadataProviders } = this;
+            const firstEnabledProvider = Object.values(metadataProviders).find(provider => {
+                return provider.showMetadata || provider.episodeMetadata;
+            });
+            return firstEnabledProvider === undefined ? 'kodi' : firstEnabledProvider.id;
         }
     },
     computed: {
-        config() {
-            return this.$store.state.config;
-        },
-        metadata() {
-            return this.$store.state.metadata;
-        },
+        ...mapState([
+            'config',
+            'metadata'
+        ]),
         multiEpStringsSelect() {
             if (!this.postProcessing.multiEpStrings) {
                 return [];
@@ -512,21 +530,9 @@ export default {
         }
     },
     mounted() {
-        /**
-         * Get the first enabled metadata provider based on enabled features.
-         * @param {Object} providers - The metadata providers object.
-         * @return {String} - The id of the first enabled provider.
-         */
-        const getFirstEnabledMetadataProvider = providers => {
-            const firstEnabledProvider = Object.values(providers).find(provider => {
-                return provider.showMetadata || provider.episodeMetadata;
-            });
-            return firstEnabledProvider === undefined ? 'kodi' : firstEnabledProvider.id;
-        };
-
         // This is used to wait for the config to be loaded by the store.
         this.$once('loaded', () => {
-            const { config, metadata } = this;
+            const { config, metadata, getFirstEnabledMetadataProvider } = this;
 
             this.configLoaded = true;
 
@@ -534,8 +540,29 @@ export default {
             this.postProcessing = Object.assign({}, this.postProcessing, config.postProcessing);
 
             this.metadataProviders = Object.assign({}, this.metadataProviders, metadata.metadataProviders);
-            this.metadataProviderSelected = getFirstEnabledMetadataProvider(this.metadataProviders);
+            this.metadataProviderSelected = getFirstEnabledMetadataProvider();
         });
+    },
+    watch: {
+        'config.postProcessing': {
+            handler(newValue) {
+                // Map the state values to local data.
+                this.postProcessing = Object.assign({}, this.postProcessing, newValue);
+            },
+            deep: true,
+            immediate: false
+        },
+        'metadata.metadataProviders': {
+            handler(newValue) {
+                const { getFirstEnabledMetadataProvider } = this;
+
+                // Map the state values to local data.
+                this.metadataProviders = Object.assign({}, this.metadataProviders, newValue);
+                this.metadataProviderSelected = getFirstEnabledMetadataProvider();
+            },
+            deep: true,
+            immediate: false
+        }
     }
 };
 </script>
