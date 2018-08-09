@@ -198,7 +198,6 @@
                 // Global components
                 Vue.use(ToggleButton);
                 Vue.use(Snotify);
-
             }
         </script>
         <%block name="scripts" />
