@@ -34,22 +34,39 @@ const webpackConfig = mode => ({
     },
     optimization: {
         runtimeChunk: {
-            name: 'vendors'
+            name: 'medusa-runtime'
         },
         splitChunks: {
             chunks: 'all',
-            name: 'vendors',
             cacheGroups: {
-                styles: {
+                runtime: {
+                    name: 'medusa-runtime',
+                    test(chunk) {
+                        const { resource } = chunk;
+                        if (!/[\\/]src[\\/]/.test(resource)) {
+                            return false;
+                        }
+                        if (resource.includes('open-sans.css')) {
+                            // We want that to go into `vendoredStyles`
+                            return false;
+                        }
+                        return true;
+                    },
+                    priority: 0
+                },
+                vendoredStyles: {
+                    name: 'vendors',
                     test: /\.css$/,
-                    priority: 10
+                    priority: -9
                 },
                 // These are the default cacheGroups!
-                vendors: {
+                vendoredScripts: {
+                    name: 'vendors',
                     test: /[\\/]node_modules[\\/]/,
                     priority: -10
                 },
                 default: {
+                    name: 'vendors',
                     minChunks: 2,
                     priority: -20,
                     reuseExistingChunk: true
