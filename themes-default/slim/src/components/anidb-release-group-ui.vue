@@ -167,7 +167,7 @@ module.exports = {
         },
         allGroups: {
             handler(newValue) {
-                this.createIndexedObjects(newValue, 'releasegroups'); 
+                this.createIndexedObjects(newValue, 'releasegroups');
             }
         }
     }

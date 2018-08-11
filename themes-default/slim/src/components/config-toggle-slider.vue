@@ -37,7 +37,7 @@ module.exports = {
     },
     data() {
         return {
-            localChecked: null,
+            localChecked: null
         };
     },
     mounted() {
