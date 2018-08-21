@@ -790,14 +790,14 @@ eval("var g; // This works in non-strict mode\n\ng = function () {\n  return thi
 
 /***/ }),
 
-/***/ "./src/css/open-sans.css":
-/*!*******************************!*\
-  !*** ./src/css/open-sans.css ***!
-  \*******************************/
+/***/ "./vendor/css/open-sans.css":
+/*!**********************************!*\
+  !*** ./vendor/css/open-sans.css ***!
+  \**********************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("// extracted by mini-css-extract-plugin\n\n//# sourceURL=webpack:///./src/css/open-sans.css?");
+eval("// extracted by mini-css-extract-plugin\n\n//# sourceURL=webpack:///./vendor/css/open-sans.css?");
 
 /***/ })
 

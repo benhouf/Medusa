@@ -46,10 +46,6 @@ const webpackConfig = mode => ({
                         if (!/[\\/]src[\\/]/.test(resource)) {
                             return false;
                         }
-                        if (resource.includes('open-sans.css')) {
-                            // We want that to go into `vendoredStyles`
-                            return false;
-                        }
                         return true;
                     },
                     priority: 0
